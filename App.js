@@ -17,12 +17,19 @@ function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State untuk pesan kesalahan
 
   const createTask = () => {
+    if (newTask.trim() === '') {
+      setErrorMessage('Task title is required'); // Set pesan kesalahan jika input kosong
+      return;
+    }
+
     setTasks(tasks => {
       return [{title: newTask, id: tasks.length + 1, done: false}, ...tasks];
     });
     setNewTask('');
+    setErrorMessage(''); // Hapus pesan kesalahan setelah input valid
   };
 
   const deleteTask = id => {
@@ -73,7 +80,12 @@ function App() {
           <TextInput
             placeholder="Buat tugas..."
             value={newTask}
-            onChangeText={setNewTask}
+            onChangeText={text => {
+              setNewTask(text);
+              if (text.trim() !== '') {
+                setErrorMessage(''); // Hapus pesan kesalahan saat input berubah
+              }
+            }}
           />
         </View>
         <View style={{width: 20}}>
@@ -82,6 +94,11 @@ function App() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* TAMPILKAN PESAN KESALAHAN */}
+      {errorMessage !== '' && (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      )}
 
       {/* RENDER TUGAS */}
       {tasks.length === 0 && (
@@ -276,6 +293,12 @@ const styles = StyleSheet.create({
   viewInput: {
     flexDirection: 'row',
     margin: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: -10,
+    marginBottom: 10,
   },
 });
 
