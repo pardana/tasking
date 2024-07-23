@@ -86,7 +86,7 @@ export default function Home() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setModalAddVisible(false);
+      closeModalAdd();
     }, 2000);
   };
 
@@ -260,6 +260,75 @@ export default function Home() {
                     <ActivityIndicator color={'white'} />
                   ) : (
                     <Text style={styles.textBtnTitle}>Submit</Text>
+                  )}
+                </View>
+              </TouchableNativeFeedback>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* MODAL EDIT */}
+      <Modal
+        visible={modalEditVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeModalEdit}>
+        <View style={styles.modalContainer}>
+          <Pressable style={styles.modalBackdrop} onPress={closeModalEdit} />
+          <View style={styles.viewModalContainer}>
+            <View style={styles.viewModalHeader}>
+              <Icon name="notebook-edit-outline" size={30} color={'white'} />
+              <Text style={{...styles.textDefault, fontSize: 20}}>
+                Edit Task
+              </Text>
+              <TouchableOpacity onPress={closeModalEdit}>
+                <Icon name="close-circle-outline" size={30} color={'white'} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.viewModalInput}>
+              {/* INPUT TITLE */}
+              <Text style={styles.textInputTitle}>
+                Title <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <View style={styles.viewInput}>
+                <Icon name="format-title" size={23} color={'black'} />
+                <TextInput
+                  placeholder="Title..."
+                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
+                  onChangeText={text => setTitle(text)}
+                  value={title}
+                />
+              </View>
+
+              <Gap height={15} />
+
+              {/* INPUT DESCRIPTION */}
+              <Text style={styles.textInputTitle}>
+                Description <Text style={{color: 'red'}}>*</Text>
+              </Text>
+              <View style={styles.viewInput}>
+                <Icon name="text" size={23} color={'black'} />
+                <TextInput
+                  placeholder="Description..."
+                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
+                  onChangeText={text => setDescription(text)}
+                  value={description}
+                />
+              </View>
+
+              <Gap height={30} />
+
+              {/* BUTTON SUBMIT */}
+              <TouchableNativeFeedback
+                useForeground
+                onPress={() => onPressSubmit()}>
+                <View style={styles.btnSubmitAdd}>
+                  {loading ? (
+                    <ActivityIndicator color={'white'} />
+                  ) : (
+                    <Text style={styles.textBtnTitle}>Update</Text>
                   )}
                 </View>
               </TouchableNativeFeedback>
