@@ -171,6 +171,20 @@ export default function Home() {
           );
         }}
       />
+
+      {/* BUTTON ADD */}
+      <View style={styles.viewLine} />
+      <TouchableNativeFeedback
+        useForeground
+        onPress={() => setModalAddVisible(true)}>
+        <View style={styles.btnAdd}>
+          <Icon name="plus-circle-outline" color={'white'} size={20} />
+          <Gap width={5} />
+          <Text style={styles.textBtnTitle}>Tambah</Text>
+        </View>
+      </TouchableNativeFeedback>
+
+      <Gap height={30} />
     </View>
   );
 }
@@ -180,12 +194,32 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
+  textBtnTitle: {
+    color: 'white',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontFamily: 'HelveticaNeueMedium',
+    fontSize: 16,
+  },
+  btnAdd: {
+    height: 50,
+    flexDirection: 'row',
+    backgroundColor: '#164877',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 35,
+    marginTop: -50,
+    borderRadius: 50 / 2,
+    elevation: 3,
+    overflow: 'hidden',
+  },
   btnEdit: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
-    backgroundColor: '#00677E',
+    backgroundColor: '#164877',
     width: 80,
     borderRadius: 80 / 2,
   },
