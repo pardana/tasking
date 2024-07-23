@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     height: '100%',
     textAlign: 'center',
     textAlignVertical: 'center',
-    fontFamily: 'HelveticaNeue-Medium',
+    fontFamily: 'HelveticaNeueMedium',
     fontSize: 16,
   },
   btnSubmit: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   plainText: {
     color: 'white',
-    fontFamily: 'HelveticaNeue-Medium',
+    fontFamily: 'HelveticaNeueMedium',
   },
   viewRememberMe: {
     flexDirection: 'row',
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginHorizontal: 5,
-    fontFamily: 'HelveticaNeue-Medium',
+    fontFamily: 'HelveticaNeueMedium',
     color: 'black',
   },
   viewInput: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   textInputTitle: {
     color: 'white',
     fontSize: 16,
-    fontFamily: 'HelveticaNeue-Medium',
+    fontFamily: 'HelveticaNeueMedium',
     marginBottom: 5,
   },
   viewSignIn: {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   textTitle: {
     color: 'white',
     fontSize: 27,
-    fontFamily: 'HelveticaNeue-Heavy',
+    fontFamily: 'HelveticaNeueHeavy',
   },
   viewContainer: {
     maxWidth: '480',
