@@ -1,10 +1,18 @@
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import {Background, Gap} from '../components/screens';
 
-export default function SignUp() {
+export default function SignUp({navigation}) {
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   const [rememberUser, setRememberUser] = useState(false);
@@ -48,6 +56,107 @@ export default function SignUp() {
               </View>
 
               <Gap height={20} />
+
+              {/* INPUT EMAIL */}
+              <Text style={styles.textInputTitle}>Email</Text>
+              <View style={styles.viewInput}>
+                <Icon name="gmail" color={'black'} size={23} />
+                <TextInput
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  style={styles.input}
+                  onChangeText={setEmail}
+                />
+              </View>
+
+              <Gap height={20} />
+
+              {/* INPUT PASSWORD */}
+              <Text style={styles.textInputTitle}>Password</Text>
+              <View style={styles.viewInput}>
+                <Icon name={'lock'} color={'black'} size={23} />
+                <TextInput
+                  placeholder="Password"
+                  secureTextEntry={securePassword}
+                  autoCapitalize="none"
+                  style={styles.input}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                  onPress={() => setSecurePassword(!securePassword)}>
+                  <Icon
+                    name={securePassword ? 'eye-off' : 'eye'}
+                    color={'black'}
+                    size={23}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <Gap height={20} />
+
+              {/* INPUT CONFIRM PASSWORD */}
+              <Text style={styles.textInputTitle}>Confirm Password</Text>
+              <View style={styles.viewInput}>
+                <Icon name={'lock'} color={'black'} size={23} />
+                <TextInput
+                  placeholder="Confirm Password"
+                  secureTextEntry={secureConfirmPassword}
+                  autoCapitalize="none"
+                  style={styles.input}
+                  onChangeText={setConfirmPassword}
+                />
+                <TouchableOpacity
+                  onPress={() =>
+                    setSecureConfirmPassword(!secureConfirmPassword)
+                  }>
+                  <Icon
+                    name={secureConfirmPassword ? 'eye-off' : 'eye'}
+                    color={'black'}
+                    size={23}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* REMEMBER ME */}
+              <View style={styles.viewRememberMe}>
+                <CheckBox
+                  tintColors={{false: 'white', true: 'white'}}
+                  value={rememberUser}
+                  onValueChange={() => setRememberUser(!rememberUser)}
+                />
+                <Text
+                  style={styles.plainText}
+                  onPress={() => setRememberUser(!rememberUser)}>
+                  Remember me
+                </Text>
+              </View>
+
+              <Gap height={20} />
+
+              {/* SUBMIT & REGISTER */}
+              <TouchableNativeFeedback
+                useForeground
+                onPress={() => submitSignUp()}>
+                <View style={styles.btnSubmit}>
+                  <Text style={styles.textBtnSubmit}>Submit</Text>
+                </View>
+              </TouchableNativeFeedback>
+
+              <Gap height={10} />
+
+              <TouchableNativeFeedback
+                useForeground
+                onPress={() => navigation.goBack()}>
+                <View
+                  style={{
+                    ...styles.btnSubmit,
+                    backgroundColor: '#9A4242',
+                    width: 150,
+                  }}>
+                  <Text style={styles.textBtnSubmit}>Back</Text>
+                </View>
+              </TouchableNativeFeedback>
             </View>
           </View>
         </ScrollView>
@@ -57,6 +166,42 @@ export default function SignUp() {
 }
 
 const styles = StyleSheet.create({
+  textBtnSubmit: {
+    color: 'white',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontFamily: 'HelveticaNeueMedium',
+    fontSize: 16,
+  },
+  btnSubmit: {
+    height: 45,
+    width: 230,
+    backgroundColor: '#00677E',
+    borderRadius: 45 / 2,
+    elevation: 3,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+  plainText: {
+    color: 'white',
+    fontFamily: 'HelveticaNeueMedium',
+  },
+  viewRememberMe: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    marginTop: 5,
+  },
+  input: {
+    flex: 1,
+    marginHorizontal: 5,
+    fontFamily: 'HelveticaNeueMedium',
+    color: 'black',
+  },
   viewInput: {
     backgroundColor: 'white',
     height: 50,
