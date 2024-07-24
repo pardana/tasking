@@ -1,4 +1,10 @@
-import {StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  View,
+} from 'react-native';
 import React, {useState} from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,6 +17,7 @@ export default function RenderTask({
   open,
   onPressEdit,
   onPressDelete,
+  loadingDelete,
 }) {
   return (
     <View style={styles.viewItem}>
@@ -56,7 +63,11 @@ export default function RenderTask({
           <View style={styles.viewBtnOption}>
             <TouchableNativeFeedback useForeground onPress={onPressDelete}>
               <View style={styles.btnDelete}>
-                <Icon name="delete" color={'white'} size={20} />
+                {loadingDelete ? (
+                  <ActivityIndicator color={'white'} />
+                ) : (
+                  <Icon name="delete" color={'white'} size={20} />
+                )}
               </View>
             </TouchableNativeFeedback>
             <Gap width={10} />

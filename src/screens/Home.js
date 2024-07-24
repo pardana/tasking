@@ -156,6 +156,7 @@ export default function Home({route}) {
   };
 
   const deleteTask = id => {
+    setLoadingDelete(true);
     fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${id}`, {
       method: 'DELETE',
       headers: {
@@ -165,6 +166,7 @@ export default function Home({route}) {
     })
       .then(response => response.json())
       .then(json => {
+        setLoadingDelete(false);
         if (json?.status == 'success') {
           getTasks();
         } else {
@@ -172,6 +174,7 @@ export default function Home({route}) {
         }
       })
       .catch(error => {
+        setLoadingDelete(false);
         console.error(error);
       });
   };
@@ -235,6 +238,7 @@ export default function Home({route}) {
                 setModalEditVisible(true);
                 setEditedTask(item);
               }}
+              loadingDelete={loadingDelete}
             />
           );
         }}
