@@ -190,6 +190,30 @@ export default function Home({route}) {
       });
   };
 
+  const checklistTask = task => {
+    fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${task._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        checked: !task.checked,
+      }),
+    })
+      .then(response => response.json())
+      .then(json => {
+        if (json?.status == 'success') {
+          getTasks();
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Background />
@@ -232,6 +256,7 @@ export default function Home({route}) {
                 <CheckBox
                   value={item?.checked}
                   tintColors={{true: 'white', false: 'white'}}
+                  onValueChange={() => checklistTask(item)}
                 />
 
                 <Text style={styles.textItemTitle}>{item?.title}</Text>
