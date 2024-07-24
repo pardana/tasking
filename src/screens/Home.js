@@ -103,19 +103,43 @@ export default function Home({route}) {
 
   //EDIT MODAL
   const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
   const [editedTask, setEditedTask] = useState({
-    id: null,
+    _id: null,
     title: '',
-    description: '',
-    checked: null,
+    desc: '',
+    checked: false,
   });
 
   const closeModalEdit = () => {
     setModalEditVisible(false);
   };
 
-  const editTask = () => {
+  const updateTask = () => {
     console.log('Edit Task: ', editedTask);
+    setLoadingEdit(true);
+    fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${editedTask._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(editedTask),
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoadingEdit(false);
+        if (json?.status == 'success') {
+          getTasks();
+          setModalEditVisible(false);
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoadingEdit(false);
+        console.error(error);
+      });
   };
 
   const onPressSubmit = () => {
@@ -379,8 +403,8 @@ export default function Home({route}) {
                 <TextInput
                   placeholder="Title..."
                   style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={text => setTitle(text)}
-                  value={title}
+                  onChangeText={title => setEditedTask({...editedTask, title})}
+                  value={editedTask.title}
                 />
               </View>
 
@@ -395,19 +419,19 @@ export default function Home({route}) {
                 <TextInput
                   placeholder="Description..."
                   style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={text => setDescription(text)}
-                  value={description}
+                  onChangeText={desc => setEditedTask({...editedTask, desc})}
+                  value={editedTask.desc}
                 />
               </View>
 
               <Gap height={30} />
 
-              {/* BUTTON SUBMIT */}
+              {/* BUTTON UPDATE */}
               <TouchableNativeFeedback
                 useForeground
-                onPress={() => onPressEdit()}>
+                onPress={() => updateTask()}>
                 <View style={styles.btnSubmitAdd}>
-                  {loading ? (
+                  {loadingEdit ? (
                     <ActivityIndicator color={'white'} />
                   ) : (
                     <Text style={styles.textBtnTitle}>Update</Text>
