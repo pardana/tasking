@@ -17,7 +17,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-import {Background, Gap} from '../components/screens';
+import {Background, Gap, RenderItem} from '../components/screens';
 import UserProfile from '../components/home/UserProfile';
 
 if (Platform.OS === 'android') {
@@ -30,9 +30,7 @@ export default function Home({route}) {
   const token = route?.params?.token;
   const [openDetail, setOpenDetail] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [username, setUsername] = useState('');
 
   const getTasks = () => {
     setLoading(true);
@@ -58,32 +56,9 @@ export default function Home({route}) {
       });
   };
 
-  const getProfile = () => {
-    fetch('https://todo-api-omega.vercel.app/api/v1/profile', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(json => {
-        if (json?.status == 'success') {
-          setUsername(json?.user?.username);
-          console.log('USERNAME', json?.user?.username);
-        } else {
-          console.log(json);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
   useEffect(() => {
     getTasks();
-    getProfile();
-  }, [token]);
+  }, []);
 
   //ADD MODAL
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -167,12 +142,11 @@ export default function Home({route}) {
   };
 
   //DELETE TASK
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const confirmDelete = id => {
     Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
       {
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
       },
       {
         text: 'OK',
@@ -182,7 +156,6 @@ export default function Home({route}) {
   };
 
   const deleteTask = id => {
-    setLoadingDelete(true);
     fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${id}`, {
       method: 'DELETE',
       headers: {
@@ -192,7 +165,6 @@ export default function Home({route}) {
     })
       .then(response => response.json())
       .then(json => {
-        setLoadingDelete(false);
         if (json?.status == 'success') {
           getTasks();
         } else {
@@ -200,7 +172,6 @@ export default function Home({route}) {
         }
       })
       .catch(error => {
-        setLoadingDelete(false);
         console.error(error);
       });
   };
@@ -251,80 +222,20 @@ export default function Home({route}) {
             LayoutAnimation.easeInEaseOut();
             setOpenDetail(index == openDetail ? null : index);
           };
-          const open = openDetail == item?.checked ? true : false;
+          const open = openDetail == index;
 
           return (
-            <View style={styles.viewItem}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}>
-                <CheckBox
-                  value={item?.checked}
-                  tintColors={{true: 'white', false: 'white'}}
-                  onValueChange={() => checklistTask(item)}
-                />
-
-                <Text style={styles.textItemTitle}>{item?.title}</Text>
-                <TouchableNativeFeedback
-                  useForeground
-                  background={TouchableNativeFeedback.Ripple('#ffffff42')}
-                  onPress={() => handleOpenDetail()}>
-                  <View style={styles.btnDetail}>
-                    <Icon
-                      name={open ? 'chevron-up' : 'chevron-down'}
-                      color={'white'}
-                      size={30}
-                    />
-                  </View>
-                </TouchableNativeFeedback>
-              </View>
-
-              {open && (
-                <View
-                  style={{
-                    marginTop: 10,
-                  }}>
-                  <Text
-                    style={{
-                      ...styles.textDefault,
-                      textAlign: 'justify',
-                      lineHeight: 20,
-                    }}>
-                    {item?.desc}
-                  </Text>
-                  <View style={styles.viewBtnOption}>
-                    <TouchableNativeFeedback
-                      useForeground
-                      onPress={() => confirmDelete(item?._id)}>
-                      <View style={styles.btnDelete}>
-                        {loadingDelete ? (
-                          <ActivityIndicator />
-                        ) : (
-                          <Icon name="delete" color={'white'} size={20} />
-                        )}
-                      </View>
-                    </TouchableNativeFeedback>
-                    <Gap width={10} />
-                    <TouchableNativeFeedback
-                      useForeground
-                      onPress={() => {
-                        setModalEditVisible(true);
-                        setEditedTask(item);
-                      }}>
-                      <View style={styles.btnEdit}>
-                        <Icon name="pencil" color={'white'} size={20} />
-                        <Gap width={10} />
-                        <Text style={styles.textDefault}>Edit</Text>
-                      </View>
-                    </TouchableNativeFeedback>
-                  </View>
-                </View>
-              )}
-            </View>
+            <RenderItem
+              item={item}
+              onCheckbox={() => checklistTask(item)}
+              onPressDetail={handleOpenDetail}
+              open={open}
+              onPressDelete={() => confirmDelete(item?._id)}
+              onPressEdit={() => {
+                setModalEditVisible(true);
+                setEditedTask(item);
+              }}
+            />
           );
         }}
       />
@@ -563,39 +474,6 @@ const styles = StyleSheet.create({
     borderRadius: 50 / 2,
     elevation: 3,
     overflow: 'hidden',
-  },
-  btnEdit: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    backgroundColor: '#164877',
-    width: 80,
-    borderRadius: 80 / 2,
-  },
-  btnDelete: {
-    backgroundColor: '#9A4242',
-    borderRadius: 50,
-    padding: 8,
-  },
-  viewBtnOption: {
-    flexDirection: 'row',
-    marginTop: 10,
-    alignSelf: 'flex-end',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  btnDetail: {
-    marginLeft: 10,
-    padding: 5,
-  },
-  textItemTitle: {
-    color: 'white',
-    fontFamily: 'HelveticaNeueMedium',
-    fontSize: 18,
-  },
-  viewItem: {
-    padding: 20,
   },
   viewLine: {
     width: '85%',
