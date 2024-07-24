@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
@@ -10,18 +11,47 @@ import React, {useState} from 'react';
 import {Background, Gap} from '../components/screens';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function SignIn({navigation}) {
   const [securePassword, setSecurePassword] = useState(true);
   const [rememberUser, setRememberUser] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   //FORM DATA
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const submitSignIn = () => {
-    console.log({email, password});
-    navigation.navigate('Home');
+    setLoading(true);
+    fetch('https://todo-api-omega.vercel.app/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoading(false);
+        if (json?.status == 'success') {
+          rememberUser &&
+            EncryptedStorage.setItem(
+              'user_credential',
+              JSON.stringify({email, password}),
+            );
+          navigation.navigate('Home');
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+      });
   };
 
   return (
@@ -88,7 +118,11 @@ export default function SignIn({navigation}) {
             useForeground={true}
             onPress={() => submitSignIn()}>
             <View style={styles.btnSubmit}>
-              <Text style={styles.textBtnTitle}>Sign in</Text>
+              {loading ? (
+                <ActivityIndicator color={'white'} />
+              ) : (
+                <Text style={styles.textBtnTitle}>Sign in</Text>
+              )}
             </View>
           </TouchableNativeFeedback>
 
