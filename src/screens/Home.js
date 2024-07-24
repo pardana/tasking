@@ -30,6 +30,7 @@ export default function Home({route}) {
   const token = route?.params?.token;
   const [openDetail, setOpenDetail] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   const getTasks = () => {
@@ -126,6 +127,7 @@ export default function Home({route}) {
     }, 2000);
   };
 
+  //DELETE TASK
   const confirmDelete = id => {
     Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
       {
@@ -141,7 +143,7 @@ export default function Home({route}) {
   };
 
   const deleteTask = id => {
-    setLoading(true);
+    setLoadingDelete(true);
     fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${id}`, {
       method: 'DELETE',
       headers: {
@@ -151,7 +153,7 @@ export default function Home({route}) {
     })
       .then(response => response.json())
       .then(json => {
-        setLoading(false);
+        setLoadingDelete(false);
         if (json?.status == 'success') {
           getTasks();
         } else {
@@ -159,7 +161,7 @@ export default function Home({route}) {
         }
       })
       .catch(error => {
-        setLoading(false);
+        setLoadingDelete(false);
         console.error(error);
       });
   };
@@ -183,6 +185,8 @@ export default function Home({route}) {
       <FlatList
         data={tasks}
         keyExtractor={(item, index) => index}
+        refreshing={loading}
+        onRefresh={() => getTasks()}
         ListFooterComponent={<Gap height={20} />}
         ListEmptyComponent={<Text style={styles.textEmpty}>No Data</Text>}
         renderItem={({item, index}) => {
@@ -239,7 +243,7 @@ export default function Home({route}) {
                       useForeground
                       onPress={() => confirmDelete(item?._id)}>
                       <View style={styles.btnDelete}>
-                        {loading ? (
+                        {loadingDelete ? (
                           <ActivityIndicator />
                         ) : (
                           <Icon name="delete" color={'white'} size={20} />
