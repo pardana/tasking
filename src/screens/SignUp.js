@@ -51,7 +51,7 @@ export default function SignUp({navigation}) {
             );
           navigation.reset({
             index: 0,
-            routes: [{name: 'Home'}],
+            routes: [{name: 'Home', params: {data: json}}],
           });
         } else {
           console.log(json);

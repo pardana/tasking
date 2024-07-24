@@ -17,6 +17,7 @@ import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import {Background, Gap} from '../components/screens';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -24,9 +25,12 @@ if (Platform.OS === 'android') {
   }
 }
 
-export default function Home() {
+export default function Home({route, navigation}) {
+  const token = route?.params?.token;
   const [loading, setLoading] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
+  const [tasks, setTasks] = useState([]);
+
   const dummyData = [
     {
       id: 1,
@@ -50,6 +54,29 @@ export default function Home() {
       checked: true,
     },
   ];
+
+  const getTasks = () => {
+    fetch('https://todo-api-omega.vercel.app/api/v1/todos', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoading(false);
+        if (json?.status == 'success') {
+          setTasks(json?.data?.todos);
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+      });
+  };
 
   //ADD MODAL
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -107,8 +134,8 @@ export default function Home() {
 
       {/* VIEW DATA */}
       <FlatList
-        data={dummyData}
-        keyExtractor={item => item.id}
+        data={setTasks}
+        keyExtractor={(item, index) => index}
         ListFooterComponent={<Gap height={20} />}
         ListEmptyComponent={<Text style={styles.textEmpty}>No Data</Text>}
         renderItem={({item, index}) => {
@@ -128,11 +155,11 @@ export default function Home() {
                   width: '100%',
                 }}>
                 <CheckBox
-                  value={item.checked}
+                  value={''}
                   tintColors={{true: 'white', false: 'white'}}
                 />
 
-                <Text style={styles.textItemTitle}>{item.title}</Text>
+                <Text style={styles.textItemTitle}>{''}</Text>
                 <TouchableNativeFeedback
                   useForeground
                   background={TouchableNativeFeedback.Ripple('#ffffff42')}
@@ -158,7 +185,7 @@ export default function Home() {
                       textAlign: 'justify',
                       lineHeight: 20,
                     }}>
-                    {item.description}
+                    {''}
                   </Text>
                   <View style={styles.viewBtnOption}>
                     <TouchableNativeFeedback useForeground>

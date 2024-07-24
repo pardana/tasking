@@ -43,7 +43,7 @@ export default function SignIn({navigation}) {
               'user_credential',
               JSON.stringify({email, password}),
             );
-          navigation.navigate('Home');
+          navigation.replace('Home', {token: json?.user?.token});
         } else {
           console.log(json);
         }
