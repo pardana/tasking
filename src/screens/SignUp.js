@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,11 +12,13 @@ import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import {Background, Gap} from '../components/screens';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function SignUp({navigation}) {
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   const [rememberUser, setRememberUser] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   //FORM DATA
   const [username, setUsername] = useState('');
@@ -24,11 +27,40 @@ export default function SignUp({navigation}) {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const submitSignUp = () => {
-    console.log({username, email, password, confirmPassword});
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Home'}],
-    });
+    setLoading(true);
+    fetch('https://todo-api-omega.vercel.app/api/v1/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        email,
+        password,
+        confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoading(false);
+        if (json?.status == 'success') {
+          rememberUser &&
+            EncryptedStorage.setItem(
+              'user_credential',
+              JSON.stringify({email, password}),
+            );
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Home'}],
+          });
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+      });
   };
 
   return (
@@ -139,7 +171,11 @@ export default function SignUp({navigation}) {
                 useForeground
                 onPress={() => submitSignUp()}>
                 <View style={styles.btnSubmit}>
-                  <Text style={styles.textBtnSubmit}>Submit</Text>
+                  {loading ? (
+                    <ActivityIndicator color={'white'} />
+                  ) : (
+                    <Text style={styles.textBtnSubmit}>Register</Text>
+                  )}
                 </View>
               </TouchableNativeFeedback>
 
