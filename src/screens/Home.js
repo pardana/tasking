@@ -17,7 +17,13 @@ import {
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-import {Background, Gap, ModalAddTask, RenderItem} from '../components/screens';
+import {
+  Background,
+  Gap,
+  ModalAddTask,
+  ModalEditTask,
+  RenderItem,
+} from '../components/screens';
 import UserProfile from '../components/home/UserProfile';
 
 if (Platform.OS === 'android') {
@@ -115,7 +121,7 @@ export default function Home({route}) {
   };
 
   const updateTask = () => {
-    console.log('Edit Task: ', editedTask);
+    // console.log('Edit Task: ', editedTask);
     setLoadingEdit(true);
     fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${editedTask._id}`, {
       method: 'PUT',
@@ -269,73 +275,16 @@ export default function Home({route}) {
       />
 
       {/* MODAL EDIT */}
-      <Modal
+      <ModalEditTask
         visible={modalEditVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={closeModalEdit}>
-        <View style={styles.modalContainer}>
-          <Pressable style={styles.modalBackdrop} onPress={closeModalEdit} />
-          <View style={styles.viewModalContainer}>
-            <View style={styles.viewModalHeader}>
-              <Icon name="notebook-edit-outline" size={30} color={'white'} />
-              <Text style={{...styles.textDefault, fontSize: 20}}>
-                Edit Task
-              </Text>
-              <TouchableOpacity onPress={closeModalEdit}>
-                <Icon name="close-circle-outline" size={30} color={'white'} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.viewModalInput}>
-              {/* INPUT TITLE */}
-              <Text style={styles.textInputTitle}>
-                Title <Text style={{color: 'red'}}>*</Text>
-              </Text>
-              <View style={styles.viewInput}>
-                <Icon name="format-title" size={23} color={'black'} />
-                <TextInput
-                  placeholder="Title..."
-                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={title => setEditedTask({...editedTask, title})}
-                  value={editedTask.title}
-                />
-              </View>
-
-              <Gap height={15} />
-
-              {/* INPUT DESCRIPTION */}
-              <Text style={styles.textInputTitle}>
-                Description <Text style={{color: 'red'}}>*</Text>
-              </Text>
-              <View style={styles.viewInput}>
-                <Icon name="text" size={23} color={'black'} />
-                <TextInput
-                  placeholder="Description..."
-                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={desc => setEditedTask({...editedTask, desc})}
-                  value={editedTask.desc}
-                />
-              </View>
-
-              <Gap height={30} />
-
-              {/* BUTTON UPDATE */}
-              <TouchableNativeFeedback
-                useForeground
-                onPress={() => updateTask()}>
-                <View style={styles.btnSubmitAdd}>
-                  {loadingEdit ? (
-                    <ActivityIndicator color={'white'} />
-                  ) : (
-                    <Text style={styles.textBtnTitle}>Update</Text>
-                  )}
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onRequestClose={closeModalEdit}
+        onChangeTitle={title => setEditedTask({...editedTask, title})}
+        onChangeDesc={desc => setEditedTask({...editedTask, desc})}
+        valueTitle={editedTask?.title}
+        valueDesc={editedTask?.desc}
+        onPressSubmit={() => updateTask()}
+        loadingEdit={loadingEdit}
+      />
     </View>
   );
 }

@@ -13,13 +13,15 @@ import React from 'react';
 import Gap from '../screens/Gap';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function ModalAddTask({
+export default function ModalEditTask({
   visible,
   onRequestClose,
   onChangeTitle,
   onChangeDesc,
+  valueTitle,
+  valueDesc,
   onPressSubmit,
-  loadingAdd,
+  loadingEdit,
 }) {
   return (
     <Modal
@@ -31,8 +33,8 @@ export default function ModalAddTask({
         <Pressable style={styles.modalBackdrop} onPress={onRequestClose} />
         <View style={styles.viewModalContainer}>
           <View style={styles.viewModalHeader}>
-            <Icon name="notebook-plus-outline" size={30} color={'white'} />
-            <Text style={{...styles.textDefault, fontSize: 20}}>Add Task</Text>
+            <Icon name="notebook-edit-outline" size={30} color={'white'} />
+            <Text style={{...styles.textDefault, fontSize: 20}}>Edit Task</Text>
             <TouchableOpacity onPress={onRequestClose}>
               <Icon name="close-circle-outline" size={30} color={'white'} />
             </TouchableOpacity>
@@ -49,6 +51,7 @@ export default function ModalAddTask({
                 placeholder="Title..."
                 style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
                 onChangeText={onChangeTitle}
+                value={valueTitle}
               />
             </View>
 
@@ -64,20 +67,21 @@ export default function ModalAddTask({
                 placeholder="Description..."
                 style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
                 onChangeText={onChangeDesc}
+                value={valueDesc}
               />
             </View>
 
             <Gap height={30} />
 
-            {/* BUTTON SUBMIT */}
+            {/* BUTTON UPDATE */}
             <TouchableNativeFeedback
               useForeground
               onPress={() => onPressSubmit()}>
               <View style={styles.btnSubmitAdd}>
-                {loadingAdd ? (
+                {loadingEdit ? (
                   <ActivityIndicator color={'white'} />
                 ) : (
-                  <Text style={styles.textBtnTitle}>Submit</Text>
+                  <Text style={styles.textBtnTitle}>Update</Text>
                 )}
               </View>
             </TouchableNativeFeedback>
