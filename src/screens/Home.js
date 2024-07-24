@@ -1,22 +1,17 @@
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   LayoutAnimation,
-  Modal,
   Platform,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   TouchableNativeFeedback,
-  TouchableOpacity,
   UIManager,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CheckBox from '@react-native-community/checkbox';
 import {
   Background,
   Gap,
