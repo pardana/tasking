@@ -242,7 +242,7 @@ export default function Home({route}) {
             LayoutAnimation.easeInEaseOut();
             setOpenDetail(index == openDetail ? null : index);
           };
-          const open = openDetail == index ? true : false;
+          const open = openDetail == item?.checked ? true : false;
 
           return (
             <View style={styles.viewItem}>

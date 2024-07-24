@@ -27,6 +27,8 @@ export default function SignUp({navigation}) {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const submitSignUp = () => {
+    console.log('rememberUser', rememberUser);
+
     setLoading(true);
     fetch('https://todo-api-omega.vercel.app/api/v1/auth/register', {
       method: 'POST',

@@ -23,6 +23,8 @@ export default function SignIn({navigation}) {
   const [password, setPassword] = useState('');
 
   const submitSignIn = () => {
+    console.log('rememberUser', rememberUser);
+
     setLoading(true);
     fetch('https://todo-api-omega.vercel.app/api/v1/auth/login', {
       method: 'POST',
@@ -72,6 +74,7 @@ export default function SignIn({navigation}) {
               autoCapitalize="none"
               style={styles.input}
               onChangeText={setEmail}
+              placeholderTextColor={'grey'}
             />
           </View>
 
@@ -86,6 +89,7 @@ export default function SignIn({navigation}) {
               autoCapitalize="none"
               style={styles.input}
               onChangeText={setPassword}
+              placeholderTextColor={'grey'}
             />
             <TouchableOpacity
               onPress={() => setSecurePassword(!securePassword)}>
