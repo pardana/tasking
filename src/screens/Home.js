@@ -32,6 +32,7 @@ export default function Home({route}) {
   const [loading, setLoading] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [username, setUsername] = useState('');
 
   const getTasks = () => {
     setLoading(true);
@@ -57,9 +58,32 @@ export default function Home({route}) {
       });
   };
 
+  const getProfile = () => {
+    fetch('https://todo-api-omega.vercel.app/api/v1/profile', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        if (json?.status == 'success') {
+          setUsername(json?.user?.username);
+          console.log('USERNAME', json?.user?.username);
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     getTasks();
-  }, []);
+    getProfile();
+  }, [token]);
 
   //ADD MODAL
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -142,15 +166,6 @@ export default function Home({route}) {
       });
   };
 
-  const onPressSubmit = () => {
-    console.log('Add Task: ', title, description);
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      closeModalAdd();
-    }, 2000);
-  };
-
   //DELETE TASK
   const confirmDelete = id => {
     Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
@@ -221,8 +236,9 @@ export default function Home({route}) {
       {/* USER FPROFILE */}
       <View style={styles.viewProfile}>
         <>
-          <Text style={styles.textDefault}>Hi, </Text>
-          <Text style={styles.textUserName}>User Name</Text>
+          <Text style={styles.textDefault}>
+            Hi, <Text style={styles.textUserName}>{username}</Text>
+          </Text>
         </>
         <Icon name="account-circle" color={'white'} size={50} />
       </View>
@@ -583,7 +599,7 @@ const styles = StyleSheet.create({
   textItemTitle: {
     color: 'white',
     fontFamily: 'HelveticaNeueMedium',
-    fontSize: 22,
+    fontSize: 18,
   },
   viewItem: {
     padding: 20,
@@ -600,7 +616,7 @@ const styles = StyleSheet.create({
   textUserName: {
     color: 'white',
     fontFamily: 'HelveticaNeueBold',
-    fontSize: 18,
+    fontSize: 22,
   },
   textDefault: {
     color: 'white',

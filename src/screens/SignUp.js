@@ -27,7 +27,7 @@ export default function SignUp({navigation}) {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const submitSignUp = () => {
-    console.log('rememberUser', rememberUser);
+    // console.log('rememberUser', rememberUser);
 
     setLoading(true);
     fetch('https://todo-api-omega.vercel.app/api/v1/auth/register', {
@@ -53,7 +53,7 @@ export default function SignUp({navigation}) {
             );
           navigation.reset({
             index: 0,
-            routes: [{name: 'Home', params: {data: json}}],
+            routes: [{name: 'SignIn'}],
           });
         } else {
           console.log(json);
@@ -153,7 +153,7 @@ export default function SignUp({navigation}) {
               </View>
 
               {/* REMEMBER ME */}
-              <View style={styles.viewRememberMe}>
+              {/* <View style={styles.viewRememberMe}>
                 <CheckBox
                   tintColors={{false: 'white', true: 'white'}}
                   value={rememberUser}
@@ -164,7 +164,7 @@ export default function SignUp({navigation}) {
                   onPress={() => setRememberUser(!rememberUser)}>
                   Remember me
                 </Text>
-              </View>
+              </View> */}
 
               <Gap height={20} />
 
