@@ -18,7 +18,7 @@ import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import {Background, Gap} from '../components/screens';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import UserProfile from '../components/home/UserProfile';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -234,14 +234,7 @@ export default function Home({route}) {
       <Background />
 
       {/* USER FPROFILE */}
-      <View style={styles.viewProfile}>
-        <>
-          <Text style={styles.textDefault}>
-            Hi, <Text style={styles.textUserName}>{username}</Text>
-          </Text>
-        </>
-        <Icon name="account-circle" color={'white'} size={50} />
-      </View>
+      <UserProfile token={token} />
 
       <View style={styles.viewLine} />
 
@@ -613,21 +606,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginBottom: 25,
   },
-  textUserName: {
-    color: 'white',
-    fontFamily: 'HelveticaNeueBold',
-    fontSize: 22,
-  },
   textDefault: {
     color: 'white',
     fontFamily: 'HelveticaNeueMedium',
-  },
-  viewProfile: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    marginTop: 20,
   },
   container: {
     flex: 1,
