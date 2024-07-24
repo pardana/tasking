@@ -1,9 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-export default function UserProfile({token}) {
+export default function UserProfile({token, navigation}) {
   const [username, setUsername] = useState('Pengguna');
 
   const getUserData = async () => {
@@ -23,18 +24,27 @@ export default function UserProfile({token}) {
     }
   };
 
+  const logout = async () => {
+    try {
+      await EncryptedStorage.removeItem('user_credential');
+      navigation.replace('SignIn');
+    } catch (error) {
+      console.log('Logout error:', error);
+    }
+  };
+
   useEffect(() => {
     getUserData();
   }, []);
 
   return (
     <View style={styles.viewProfile}>
-      <>
-        <Text style={styles.textDefault}>
-          Hi, <Text style={styles.textUserName}>{username}</Text>
-        </Text>
-      </>
-      <Icon name="account-circle" color={'white'} size={50} />
+      <Text style={styles.textDefault}>
+        Hi, <Text style={styles.textUserName}>{username}</Text>
+      </Text>
+      <TouchableNativeFeedback useForeground onPress={() => logout()}>
+        <Icon name="logout" color={'#9A4242'} size={30} />
+      </TouchableNativeFeedback>
     </View>
   );
 }

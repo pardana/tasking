@@ -27,7 +27,7 @@ if (Platform.OS === 'android') {
   }
 }
 
-export default function Home({route}) {
+export default function Home({route, navigation}) {
   const token = route?.params?.token;
   const [openDetail, setOpenDetail] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -209,7 +209,7 @@ export default function Home({route}) {
       <Background />
 
       {/* USER FPROFILE */}
-      <UserProfile token={token} />
+      <UserProfile token={token} navigation={navigation} />
 
       <View style={styles.viewLine} />
 
