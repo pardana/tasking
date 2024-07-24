@@ -1,12 +1,35 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {Background} from '../components/screens';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import axios from 'axios';
 
 export default function SplashScreen({navigation}) {
-  useEffect(() => {
-    setTimeout(() => {
+  const refreshToken = async () => {
+    try {
+      const credential = await EncryptedStorage.getItem('user_credential');
+      if (credential) {
+        const response = await axios.post(
+          'https://todo-api-omega.vercel.app/api/v1/auth/login',
+          JSON.parse(credential),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        navigation.replace('Home', {token: response?.data?.user?.token});
+      } else {
+        navigation.replace('SignIn');
+      }
+    } catch (error) {
+      console.log(error);
       navigation.replace('SignIn');
-    }, 3000);
+    }
+  };
+
+  useEffect(() => {
+    refreshToken();
   }, []);
 
   return (
