@@ -3,7 +3,6 @@ import {
   FlatList,
   LayoutAnimation,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
