@@ -17,7 +17,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-import {Background, Gap, RenderItem} from '../components/screens';
+import {Background, Gap, ModalAddTask, RenderItem} from '../components/screens';
 import UserProfile from '../components/home/UserProfile';
 
 if (Platform.OS === 'android') {
@@ -64,7 +64,7 @@ export default function Home({route}) {
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [desc, setDesc] = useState('');
 
   const closeModalAdd = () => {
     setModalAddVisible(false);
@@ -80,7 +80,7 @@ export default function Home({route}) {
       },
       body: JSON.stringify({
         title: title,
-        desc: description,
+        desc: desc,
         checked: false,
       }),
     })
@@ -259,69 +259,14 @@ export default function Home({route}) {
       <Gap height={30} />
 
       {/* MODAL ADD */}
-      <Modal
+      <ModalAddTask
         visible={modalAddVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={closeModalAdd}>
-        <View style={styles.modalContainer}>
-          <Pressable style={styles.modalBackdrop} onPress={closeModalAdd} />
-          <View style={styles.viewModalContainer}>
-            <View style={styles.viewModalHeader}>
-              <Icon name="notebook-plus-outline" size={30} color={'white'} />
-              <Text style={{...styles.textDefault, fontSize: 20}}>
-                Add Task
-              </Text>
-              <TouchableOpacity onPress={closeModalAdd}>
-                <Icon name="close-circle-outline" size={30} color={'white'} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.viewModalInput}>
-              {/* INPUT TITLE */}
-              <Text style={styles.textInputTitle}>
-                Title <Text style={{color: 'red'}}>*</Text>
-              </Text>
-              <View style={styles.viewInput}>
-                <Icon name="format-title" size={23} color={'black'} />
-                <TextInput
-                  placeholder="Title..."
-                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={setTitle}
-                />
-              </View>
-
-              <Gap height={15} />
-
-              {/* INPUT DESCRIPTION */}
-              <Text style={styles.textInputTitle}>
-                Description <Text style={{color: 'red'}}>*</Text>
-              </Text>
-              <View style={styles.viewInput}>
-                <Icon name="text" size={23} color={'black'} />
-                <TextInput
-                  placeholder="Description..."
-                  style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={setDescription}
-                />
-              </View>
-
-              <Gap height={30} />
-
-              {/* BUTTON SUBMIT */}
-              <TouchableNativeFeedback useForeground onPress={() => addTask()}>
-                <View style={styles.btnSubmitAdd}>
-                  {loadingAdd ? (
-                    <ActivityIndicator color={'white'} />
-                  ) : (
-                    <Text style={styles.textBtnTitle}>Submit</Text>
-                  )}
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onRequestClose={closeModalAdd}
+        onChangeTitle={setTitle}
+        onChangeDesc={setDesc}
+        onPressSubmit={() => addTask()}
+        loadingAdd={loadingAdd}
+      />
 
       {/* MODAL EDIT */}
       <Modal
@@ -396,65 +341,6 @@ export default function Home({route}) {
 }
 
 const styles = StyleSheet.create({
-  textBtnTitle: {
-    color: 'white',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontFamily: 'HelveticaNeueMedium',
-    fontSize: 15,
-  },
-  btnSubmitAdd: {
-    height: 45,
-    width: 130,
-    backgroundColor: '#00677E',
-    overflow: 'hidden',
-    alignSelf: 'center',
-    borderRadius: 45 / 2,
-    elevation: 3,
-    justifyContent: 'center',
-  },
-  viewInput: {
-    backgroundColor: 'white',
-    height: 50,
-    flexDirection: 'row',
-    borderRadius: 50 / 2,
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    elevation: 5,
-  },
-  textInputTitle: {
-    color: 'white',
-    fontFamily: 'HelveticaNeueMedium',
-    marginBottom: 5,
-  },
-  viewModalInput: {
-    padding: 30,
-  },
-  viewModalHeader: {
-    flexDirection: 'row',
-    padding: 20,
-    justifyContent: 'space-between',
-  },
-  viewModalContainer: {
-    backgroundColor: '#164877',
-    width: '85%',
-    alignSelf: 'center',
-    maxWidth: 400,
-    borderRadius: 20,
-    elevation: 5,
-  },
-  modalBackdrop: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'black',
-    opacity: 0.4,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   textEmpty: {
     color: 'white',
     textAlign: 'center',
