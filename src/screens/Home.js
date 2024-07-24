@@ -13,7 +13,7 @@ import {
   UIManager,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
 import {Background, Gap} from '../components/screens';
@@ -25,37 +25,14 @@ if (Platform.OS === 'android') {
   }
 }
 
-export default function Home({route, navigation}) {
+export default function Home({route}) {
   const token = route?.params?.token;
-  const [loading, setLoading] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
 
-  const dummyData = [
-    {
-      id: 1,
-      title: 'Task 1',
-      description:
-        'Deskripsi tugas satu yang sangat panjang sekali dan terlalu panjang',
-      checked: false,
-    },
-    {
-      id: 2,
-      title: 'Task 2',
-      description:
-        'Deskripsi tugas dua yang sangat panjang sekali dan terlalu panjang',
-      checked: true,
-    },
-    {
-      id: 3,
-      title: 'Task 3',
-      description:
-        'Deskripsi tugas tiga yang sangat panjang sekali dan terlalu panjang',
-      checked: true,
-    },
-  ];
-
   const getTasks = () => {
+    setLoading(true);
     fetch('https://todo-api-omega.vercel.app/api/v1/todos', {
       method: 'GET',
       headers: {
@@ -78,8 +55,13 @@ export default function Home({route, navigation}) {
       });
   };
 
+  useEffect(() => {
+    getTasks();
+  }, []);
+
   //ADD MODAL
   const [modalAddVisible, setModalAddVisible] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -88,7 +70,33 @@ export default function Home({route, navigation}) {
   };
 
   const addTask = () => {
-    console.log('Add Task: ', title, description);
+    setLoadingAdd(true);
+    fetch('https://todo-api-omega.vercel.app/api/v1/todos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: title,
+        desc: description,
+        checked: false,
+      }),
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoadingAdd(false);
+        if (json?.status == 'success') {
+          getTasks();
+          setModalAddVisible(false);
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoadingAdd(false);
+        console.error(error);
+      });
   };
 
   //EDIT MODAL
@@ -134,7 +142,7 @@ export default function Home({route, navigation}) {
 
       {/* VIEW DATA */}
       <FlatList
-        data={setTasks}
+        data={tasks}
         keyExtractor={(item, index) => index}
         ListFooterComponent={<Gap height={20} />}
         ListEmptyComponent={<Text style={styles.textEmpty}>No Data</Text>}
@@ -155,11 +163,11 @@ export default function Home({route, navigation}) {
                   width: '100%',
                 }}>
                 <CheckBox
-                  value={''}
+                  value={item?.checked}
                   tintColors={{true: 'white', false: 'white'}}
                 />
 
-                <Text style={styles.textItemTitle}>{''}</Text>
+                <Text style={styles.textItemTitle}>{item?.title}</Text>
                 <TouchableNativeFeedback
                   useForeground
                   background={TouchableNativeFeedback.Ripple('#ffffff42')}
@@ -185,7 +193,7 @@ export default function Home({route, navigation}) {
                       textAlign: 'justify',
                       lineHeight: 20,
                     }}>
-                    {''}
+                    {item?.desc}
                   </Text>
                   <View style={styles.viewBtnOption}>
                     <TouchableNativeFeedback useForeground>
@@ -257,7 +265,7 @@ export default function Home({route, navigation}) {
                 <TextInput
                   placeholder="Title..."
                   style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={text => setTitle(text)}
+                  onChangeText={setTitle}
                 />
               </View>
 
@@ -272,18 +280,16 @@ export default function Home({route, navigation}) {
                 <TextInput
                   placeholder="Description..."
                   style={{flex: 1, fontFamily: 'HelveticaNeueMedium'}}
-                  onChangeText={text => setDescription(text)}
+                  onChangeText={setDescription}
                 />
               </View>
 
               <Gap height={30} />
 
               {/* BUTTON SUBMIT */}
-              <TouchableNativeFeedback
-                useForeground
-                onPress={() => onPressSubmit()}>
+              <TouchableNativeFeedback useForeground onPress={() => addTask()}>
                 <View style={styles.btnSubmitAdd}>
-                  {loading ? (
+                  {loadingAdd ? (
                     <ActivityIndicator color={'white'} />
                   ) : (
                     <Text style={styles.textBtnTitle}>Submit</Text>
@@ -350,7 +356,7 @@ export default function Home({route, navigation}) {
               {/* BUTTON SUBMIT */}
               <TouchableNativeFeedback
                 useForeground
-                onPress={() => onPressSubmit()}>
+                onPress={() => onPressEdit()}>
                 <View style={styles.btnSubmitAdd}>
                   {loading ? (
                     <ActivityIndicator color={'white'} />
