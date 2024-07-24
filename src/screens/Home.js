@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   LayoutAnimation,
   Modal,
@@ -125,6 +126,44 @@ export default function Home({route}) {
     }, 2000);
   };
 
+  const confirmDelete = id => {
+    Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => deleteTask(id),
+      },
+    ]);
+  };
+
+  const deleteTask = id => {
+    setLoading(true);
+    fetch(`https://todo-api-omega.vercel.app/api/v1/todos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(json => {
+        setLoading(false);
+        if (json?.status == 'success') {
+          getTasks();
+        } else {
+          console.log(json);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Background />
@@ -196,9 +235,15 @@ export default function Home({route}) {
                     {item?.desc}
                   </Text>
                   <View style={styles.viewBtnOption}>
-                    <TouchableNativeFeedback useForeground>
+                    <TouchableNativeFeedback
+                      useForeground
+                      onPress={() => confirmDelete(item?._id)}>
                       <View style={styles.btnDelete}>
-                        <Icon name="delete" color={'white'} size={20} />
+                        {loading ? (
+                          <ActivityIndicator />
+                        ) : (
+                          <Icon name="delete" color={'white'} size={20} />
+                        )}
                       </View>
                     </TouchableNativeFeedback>
                     <Gap width={10} />
